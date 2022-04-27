@@ -12,6 +12,8 @@ Lighthouse Container
    :maxdepth: 2
    :caption: Contents:
 
+   entrypoint.rst
+
 Indices and tables
 ==================
 

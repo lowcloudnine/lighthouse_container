@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>entrypoint &mdash; Lighthouse Container 2.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> Lighthouse Container
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoint.html">Entrypoint</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Lighthouse Container</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>entrypoint</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for entrypoint</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Entrypoint</span>
+<span class="sd">----------</span>
+
+<span class="sd">A short script to parse the &quot;score&quot; from the JSON output of Google Lighthouse and</span>
+<span class="sd">to work as the entry point for a docker container.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Imports</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<span class="c1"># ---- System</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Functions</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="lighthouse"><a class="viewcode-back" href="../entrypoint.html#entrypoint.lighthouse">[docs]</a><span class="k">def</span> <span class="nf">lighthouse</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Use lighthouse to generate an output file.&quot;&quot;&quot;</span>
+    <span class="c1"># All the options for lighthouse can be found at:</span>
+    <span class="c1">#  https://github.com/GoogleChrome/lighthouse#cli-options</span>
+    <span class="n">chrome_flags</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+        <span class="s2">&quot;--headless&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--window-size=821,843&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--no-sandbox&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--enable-javascript&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--ignore-certificate-errors&quot;</span><span class="p">,</span>  <span class="c1"># ignore https certificate issues</span>
+    <span class="p">])</span>
+
+    <span class="n">lighthouse_args</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">url</span><span class="p">,</span>
+        <span class="c1"># chrome flags are needed to fake out sites as headless often makes them</span>
+        <span class="c1"># not provide the data needed</span>
+        <span class="sa">f</span><span class="s1">&#39;--chrome-flags=&quot;</span><span class="si">{</span><span class="n">chrome_flags</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;--only-categories &quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;--no-enable-error-reporting&#39;</span><span class="p">,</span>  <span class="c1"># this keeps Google&#39;s request for reports quiet</span>
+                                        <span class="c1"># and avoids the associated 20 second delay</span>
+        <span class="s1">&#39;--quiet&#39;</span>  <span class="c1"># Keeps the lighthouse output quiet comment out if you are debugging</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output html&#39;</span><span class="p">)</span>
+        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output-path /output/output.html&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output json&#39;</span><span class="p">)</span>
+        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output-path /output/output.json&#39;</span><span class="p">)</span>
+
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;lighthouse&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">lighthouse_args</span><span class="p">]),</span>
+        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_score"><a class="viewcode-back" href="../entrypoint.html#entrypoint.parse_score">[docs]</a><span class="k">def</span> <span class="nf">parse_score</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Entry point for the script.&quot;&quot;&quot;</span>
+    <span class="n">report_json</span> <span class="o">=</span> <span class="s2">&quot;/output/output.json&quot;</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">report</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">][</span><span class="n">category</span><span class="p">][</span><span class="s1">&#39;score&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="c1"># Clean up the file so if there&#39;s a volume mount, there&#39;s no clutter</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;/output/output.json&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../entrypoint.html#entrypoint.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Return a namespace of the parsed arguments for the program.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;docker run [various docker options] lighthouse&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Run Google Lighthouse inside a docker container with some options.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--category&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;accessibility&#39;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;accessibility&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best-practices&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;performance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pwa&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;seo&quot;</span>
+        <span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The category/type of test to run, defaults to accessibility.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--url&#39;</span><span class="p">,</span> <span class="s1">&#39;-u&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;https://python.org&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A valid URL to a web site to test must start with a valid protocol &quot;</span> \
+             <span class="s2">&quot;of http:// or https://.  Defaults to https://www.python.org&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--report&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate/Output the full HTML report to a file.  If this flag/option &quot;</span> \
+             <span class="s2">&quot;is set only the html file will be generated in the directory mounted &quot;</span> \
+             <span class="s2">&quot;with the docker volume flag, i.e. -v /home/user/reports:/output &quot;</span> \
+             <span class="s2">&quot;as output.html.  If the flag is not given a single number, the &quot;</span> \
+             <span class="s2">&quot;result of the given test which is between 0 and 100 will be piped &quot;</span> \
+             <span class="s2">&quot;to stdout.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">all_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: Provide a valid URL, it must start with: http:// or https://&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">all_args</span></div>
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Main</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../entrypoint.html#entrypoint.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run as the entrypoint and ensure the input is correct.&quot;&quot;&quot;</span>
+    <span class="c1"># Run Google Lighthouse for the given category and URL</span>
+    <span class="n">lighthouse</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The results are in: ./output.html&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">parse_score</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">))</span>  <span class="c1"># &lt;-- print the score to stdout</span></div>
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Name</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">the_args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, lowcloudnine.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
