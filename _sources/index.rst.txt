@@ -13,6 +13,7 @@ Lighthouse Container
    :caption: Contents:
 
    entrypoint.rst
+   deploy.rst
 
 Indices and tables
 ==================
