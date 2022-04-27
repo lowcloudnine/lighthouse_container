@@ -18,11 +18,12 @@ sys.path.insert(0, os.path.abspath('..'))
 # -- Project information -----------------------------------------------------
 
 project = 'Lighthouse Container'
-copyright = '2022, lowcloudnine'
-author = 'lowcloudnine'
+copyright = '2022, Jon Schiefelbein'
+author = 'Jon Schiefelbein'
 
 # The full version, including alpha/beta/rc tags
-release = '2.0.0'
+import entrypoint
+release = entrypoint.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -58,3 +59,5 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 html_logo = "_static/lighthouse.jpg"
+html_favicon = "_static/plymouth.png"
+html_show_sourcelink = False

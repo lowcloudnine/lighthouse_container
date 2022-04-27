@@ -13,6 +13,7 @@ Lighthouse Container
    :caption: Contents:
 
    entrypoint.rst
+   deploy.rst
 
 Indices and tables
 ==================
@@ -20,3 +21,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. include:: ../CHANGELOG.rst

@@ -1,42 +1,35 @@
 
 ⛯  A container to run Google Lighthouse tests.
 
-Why?
-----
+.. code-block::
 
-An organization I was working for needed an automated way to run accessibility (508)
-tests against a given application.  The application was going to run in an Openshift
-environment.  The tool available for generating a report and associated score was
-Google Lighthouse.  After some research I was able to create an image using a 
-Dockerfile with the right options to do so and this repository is the result.
+    $ docker run --rm \
+         lowcloudnine/lighthouse:2.0.0 \
+         --category best-practices \
+         --url https://www.python.org
+    83
+    $ docker run --rm \
+         -v /home/wodan:/output \
+         lowcloudnine/lighthouse:2.0.0 \
+         -c accessibility \
+         -u https://www.python.org \
+         --report
+    The results are in: ./output.html
 
-Tool Set
+Please see the full `documentation <https://lowcloudnine.github.io/lighthouse_container/>`_.
+
+Overview
 --------
 
-The included Dockerfile will build with both Docker and podman.  I've attempted
-to be as container agnostic my knowledge allows.  The created images on
-`docker hub <https://hub.docker.com/repository/docker/lowcloudnine/lighthouse>`_
-should run in docker, kubernetes and Openshift.
+An OCI compliant image available on
+`docker hub <https://hub.docker.com/repository/docker/lowcloudnine/lighthouse>`_ to run
+Google Lighthouse tests against a given URL.  It can be used to generate a single score or output
+the HTML file.  The goal is to provide a tool that can be used in CI/CD pipelines to ensure any
+front-end product achieves a given level and doesn't regress.
 
-The entrypoint is a Python script.  This was chosen as it's what I know.
+Acknowledgements
+----------------
 
-Usage
------
-
-
-
-Change Log
-----------
-
-Verion 2.0.0
-~~~~~~~~~~~~
-
-.. warning::
-    This version incorporated argparse into the mix and is a breaking change from the
-    API of version 1.0.0.
-
-Version 1.0.0
-~~~~~~~~~~~~~
-
-The first working version and does the job but didn't incorporate some flags when
-running Chrome in headless mode and won't work against sites that 
+Thank you to `Raoul du Plessis <https://unsplash.com/@raouldp>`_ for open sourcing the image of the
+lighthouse used on this site.  The fav-icon for the site is provided by
+`flaticon <https://www.flaticon.com/free-icons/lighthouse>`_.
