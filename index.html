@@ -58,7 +58,6 @@
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
       <li>Lighthouse Container</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -69,39 +68,30 @@
   <section id="lighthouse-container">
 <h1>Lighthouse Container<a class="headerlink" href="#lighthouse-container" title="Permalink to this headline"></a></h1>
 <p>⛯  A container to run Google Lighthouse tests.</p>
-<section id="why">
-<h2>Why?<a class="headerlink" href="#why" title="Permalink to this headline"></a></h2>
-<p>An organization I was working for needed an automated way to run accessibility (508)
-tests against a given application.  The application was going to run in an Openshift
-environment.  The tool available for generating a report and associated score was
-Google Lighthouse.  After some research I was able to create an image using a
-Dockerfile with the right options to do so and this repository is the result.</p>
-</section>
-<section id="tool-set">
-<h2>Tool Set<a class="headerlink" href="#tool-set" title="Permalink to this headline"></a></h2>
-<p>The included Dockerfile will build with both Docker and podman.  I’ve attempted
-to be as container agnostic my knowledge allows.  The created images on
-<a class="reference external" href="https://hub.docker.com/repository/docker/lowcloudnine/lighthouse">docker hub</a>
-should run in docker, kubernetes and Openshift.</p>
-<p>The entrypoint is a Python script.  This was chosen as it’s what I know.</p>
-</section>
-<section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
-</section>
-<section id="change-log">
-<h2>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline"></a></h2>
-<section id="verion-2-0-0">
-<h3>Verion 2.0.0<a class="headerlink" href="#verion-2-0-0" title="Permalink to this headline"></a></h3>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>This version incorporated argparse into the mix and is a breaking change from the
-API of version 1.0.0.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
+     lowcloudnine/lighthouse:2.0.0 \
+     --category best-practices \
+     --url https://www.python.org
+83
+$ docker run --rm \
+     -v /home/wodan:/output \
+     lowcloudnine/lighthouse:2.0.0 \
+     -c accessibility \
+     -u https://www.python.org \
+     --report
+The results are in: ./output.html
+</pre></div>
 </div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<p>An OCI compliant image to run Google Lighthouse tests against a given URL.  It can be used to generate
+a single score or output the HTML file.  The goal is to provide a tool that can be used in a CI/CD
+pipeline to ensure any front-end product achieves a given level and doesn’t regress.</p>
 </section>
-<section id="version-1-0-0">
-<h3>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Permalink to this headline"></a></h3>
-<p>The first working version and does the job but didn’t incorporate some flags when
-running Chrome in headless mode and won’t work against sites that</p>
+<section id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline"></a></h2>
+<p>Thank you to <a class="reference external" href="https://unsplash.com/&#64;raouldp">Raoul du Plessis</a> for open sourcing the image of the
+lighthouse used on this site.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -113,7 +103,6 @@ running Chrome in headless mode and won’t work against sites that</p>
 </div>
 </section>
 </section>
-</section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
 <ul class="simple">
@@ -121,6 +110,21 @@ running Chrome in headless mode and won’t work against sites that</p>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+</section>
+<section id="change-log">
+<h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline"></a></h1>
+<section id="better-argument-handling">
+<h2>2.0.0 2022-04-19 Better Argument Handling<a class="headerlink" href="#better-argument-handling" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Refactor to use argparse library for argument handling</p></li>
+</ul>
+</section>
+<section id="initial-release">
+<h2>1.0.0 2022-04-12 Initial release<a class="headerlink" href="#initial-release" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Initial release, container size 882MB</p></li>
+</ul>
+</section>
 </section>
 
 
@@ -133,7 +137,7 @@ running Chrome in headless mode and won’t work against sites that</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, lowcloudnine.</p>
+    <p>&#169; Copyright 2022, Jon Schiefelbein.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
