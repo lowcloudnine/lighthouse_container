@@ -17,6 +17,10 @@ import os
 import subprocess
 import sys
 
+# Define version in this file as a centralized and easy place to get to and change
+# Use semanic version as defined at: https://semver.org/
+__version__ = "2.0.1"
+
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
