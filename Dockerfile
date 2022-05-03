@@ -1,6 +1,6 @@
-FROM redhat/ubi8:latest
+FROM redhat/ubi8:8.5
 
-ARG WORK_DIR=/workspace
+ENV WORK_DIR=/workspace
 
 # Update the system & install Google Chrome
 RUN \
@@ -18,7 +18,7 @@ RUN \
 # Install lighthouse and tools for running it, i.e. boto3, etc.
 RUN \
     # Add Node JS
-    curl -sL https://rpm.nodesource.com/setup_17.x | bash - && \
+    curl -sL https://rpm.nodesource.com/setup_18.x | bash - && \
     dnf -y install nodejs --nogpgcheck && \
     npm install -g lighthouse && \
     \
@@ -50,4 +50,8 @@ WORKDIR $WORK_DIR
 
 # Copy in the entrypoint script and make it the entry point
 COPY ./entrypoint.py $WORK_DIR/entrypoint.py
-# ENTRYPOINT [ "python3", "$WORK_DIR/entrypoint.py" ]
+
+# In the ENTRYPOINT Docker doesn't replace variables so, it's hard coded and
+# the part before entrypoint.py needs to match the ENV variable WORK_DIR
+# see https://docs.docker.com/engine/reference/builder/ for more info
+ENTRYPOINT ["python3", "/workspace/entrypoint.py" ]
