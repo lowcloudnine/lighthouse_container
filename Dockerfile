@@ -1,5 +1,7 @@
 FROM redhat/ubi8:latest
 
+ARG WORK_DIR=/workspace
+
 RUN \
     # Update the System
     dnf -y update && \
@@ -22,8 +24,8 @@ RUN \
     echo "lighthouse:lighthouse" | chpasswd && \
     \
     # Add Volume for data output
-    mkdir -p /output && \
-    chown lighthouse:lighthouse /output && \
+    mkdir -p $WORK_DIR && \
+    chown lighthouse:lighthouse $WORK_DIR && \
     \
     # Clean up
     dnf remove unzip -y && \
@@ -32,8 +34,8 @@ RUN \
     rm -rf /var/cache/*
 
 USER lighthouse
-VOLUME [ "/output" ]
-WORKDIR /output
+VOLUME [ "$WORK_DIR" ]
+WORKDIR $WORK_DIR
 
-COPY ./entrypoint.py .
+COPY ./entrypoint.py $WORK_DIR
 ENTRYPOINT [ "python3", "./entrypoint.py" ]
