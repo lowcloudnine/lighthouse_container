@@ -4,17 +4,17 @@
 .. code-block::
 
     $ docker run --rm \
-         lowcloudnine/lighthouse:2.0.0 \
+         docker.io/lowcloudnine/lighthouse:2.1.0 \
          --category best-practices \
          --url https://www.python.org
     83
     $ docker run --rm \
-         -v /home/wodan:/output \
-         lowcloudnine/lighthouse:2.0.0 \
+         -v /home/wodan:/workspace \
+         docker.io/lowcloudnine/lighthouse:2.1.0 \
          -c accessibility \
          -u https://www.python.org \
          --report
-    The results are in: ./output.html
+    lighthouse_accessibility_20220503_1511.html
 
 Please see the full `documentation <https://lowcloudnine.github.io/lighthouse_container/>`_.
 
