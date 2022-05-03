@@ -1,5 +1,7 @@
 FROM redhat/ubi8:latest
 
+ARG WORK_DIR=/workspace
+
 # Update the system & install Google Chrome
 RUN \
     # Update the System
@@ -30,8 +32,8 @@ RUN \
     echo "lighthouse:lighthouse" | chpasswd && \
     \
     # Add Volume for data output
-    mkdir -p /output && \
-    chown lighthouse:lighthouse /output
+    mkdir -p $WORK_DIR && \
+    chown lighthouse:lighthouse $WORK_DIR
 
 # Before changing to the lighthouse user, clean up the system
 RUN \
@@ -41,11 +43,11 @@ RUN \
     rm -f /tmp/*.zip && \
     rm -rf /var/cache/*
 
-# Switch to the lighthouse user and default to using the /output directory
+# Switch to the lighthouse user and default to using the $WORK_DIR directory
 USER lighthouse
-VOLUME [ "/output" ]
-WORKDIR /output
+VOLUME [ "$WORK_DIR" ]
+WORKDIR $WORK_DIR
 
 # Copy in the entrypoint script and make it the entry point
-COPY ./entrypoint.py /output/entrypoint.py
-ENTRYPOINT [ "python3", "/output/entrypoint.py" ]
+COPY ./entrypoint.py $WORK_DIR/entrypoint.py
+# ENTRYPOINT [ "python3", "$WORK_DIR/entrypoint.py" ]
