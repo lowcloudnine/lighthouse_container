@@ -43,7 +43,9 @@ class LighthouseTest:
         self.report_type = report_type
 
         dtg = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-        self.output_path = f"/output/lighthouse_{self.category}_{dtg}.{report_type}"
+        self.output_path = (
+            f"{os.getenv('WORK_DIR')}/lighthouse_{self.category}_{dtg}.{report_type}"
+        )
 
     def generate_report(self, report_type) -> str:
         """Use lighthouse to generate an output file."""
@@ -170,7 +172,6 @@ def main(category: str, url: str, report: bool):
         # print just the numeric score to stdout, i.e. 75
         print(lh_test.parse_score())
 
-
 # ----------------------------------------------------------------------------
 # Name
 # ----------------------------------------------------------------------------
@@ -180,8 +181,22 @@ if __name__ == "__main__":
     the_args = parse_args()
 
     if the_args.verbose:
+        print()
+        print("-" * 40)
+        print(f"All arguments given: {the_args}")
+        print()
         print(f"Category: {the_args.category}")
         print(f"URL: {the_args.url}")
         print(f"Report: {the_args.report}")
+        print(f"Verbose: {the_args.verbose}")
+        print()
+        if the_args.report:
+            print("Output file: ")
+        else:
+            print("Score: ")
+        main(the_args.category, the_args.url, the_args.report)
+        print("-" * 40)
+        print()
 
-    main(the_args.category, the_args.url, the_args.report)
+    else:
+        main(the_args.category, the_args.url, the_args.report)
