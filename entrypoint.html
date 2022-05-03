@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrypoint &mdash; Lighthouse Container 2.0.1 documentation</title>
+  <title>Entrypoint &mdash; Lighthouse Container 2.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -75,17 +75,31 @@
 <span id="entrypoint"></span><h1>Entrypoint<a class="headerlink" href="#module-entrypoint" title="Permalink to this headline"></a></h1>
 <section id="id1">
 <h2>Entrypoint<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h2>
-<p>A short script to parse the “score” from the JSON output of Google Lighthouse and
-to work as the entry point for a docker container.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="entrypoint.lighthouse">
-<span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">lighthouse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#lighthouse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.lighthouse" title="Permalink to this definition"></a></dt>
+<p>A short script to parse the “score” from the JSON output of Google Lighthouse
+and to work as the entry point for a docker container.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="entrypoint.LighthouseTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">LighthouseTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#LighthouseTest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.LighthouseTest" title="Permalink to this definition"></a></dt>
+<dd><p>A lighthouse test as an object.</p>
+<p>The class/object will include all the associated datastructures and
+functionality.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="entrypoint.LighthouseTest.generate_report">
+<span class="sig-name descname"><span class="pre">generate_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report_type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/entrypoint.html#LighthouseTest.generate_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.LighthouseTest.generate_report" title="Permalink to this definition"></a></dt>
 <dd><p>Use lighthouse to generate an output file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="entrypoint.LighthouseTest.parse_score">
+<span class="sig-name descname"><span class="pre">parse_score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#LighthouseTest.parse_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.LighthouseTest.parse_score" title="Permalink to this definition"></a></dt>
+<dd><p>Entry point for the script.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="entrypoint.main">
-<span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.main" title="Permalink to this definition"></a></dt>
 <dd><p>Run as the entrypoint and ensure the input is correct.</p>
 </dd></dl>
 
@@ -93,12 +107,6 @@ to work as the entry point for a docker container.</p>
 <dt class="sig sig-object py" id="entrypoint.parse_args">
 <span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.parse_args" title="Permalink to this definition"></a></dt>
 <dd><p>Return a namespace of the parsed arguments for the program.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="entrypoint.parse_score">
-<span class="sig-prename descclassname"><span class="pre">entrypoint.</span></span><span class="sig-name descname"><span class="pre">parse_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/entrypoint.html#parse_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#entrypoint.parse_score" title="Permalink to this definition"></a></dt>
-<dd><p>Entry point for the script.</p>
 </dd></dl>
 
 </section>

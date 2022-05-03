@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deploy &mdash; Lighthouse Container 2.0.1 documentation</title>
+  <title>Deploy &mdash; Lighthouse Container 2.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="entrypoint.html">Entrypoint</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Deploy</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker-hub">Docker Hub</a></li>
 </ul>
 </li>
 </ul>
@@ -87,6 +88,19 @@ $ ghp-import -n -p ./_build/html
 sphinx docs to display correctly.</p>
 <p>If you didn’t run <cite>pip install -r requirements.txt</cite> in your Python environment you can run
 <cite>pip install ghp-import</cite> to install ghp-import.</p>
+</section>
+<section id="docker-hub">
+<h2>Docker Hub<a class="headerlink" href="#docker-hub" title="Permalink to this headline"></a></h2>
+<p>Tags in the project will match the pattern:  docker.io/lowcloudnine/lighthouse:x.y.z were x.y.z is
+the semanic version number of the image release and ideally there should be a tag in the git repo
+with the same version number.</p>
+<p>An example deployment would look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /path/to/project
+$ docker build -t docker.io/lowcloudnine/lighthouse:2.0.1 .
+$ docker login
+$ docker push docker.io/lowcloudnine/lighthouse:2.0.1
+</pre></div>
+</div>
 </section>
 </section>
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lighthouse Container &mdash; Lighthouse Container 2.0.1 documentation</title>
+  <title>Lighthouse Container &mdash; Lighthouse Container 2.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -71,17 +71,17 @@
 <h1>Lighthouse Container<a class="headerlink" href="#lighthouse-container" title="Permalink to this headline"></a></h1>
 <p>⛯  A container to run Google Lighthouse tests.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
-     lowcloudnine/lighthouse:2.0.0 \
+     docker.io/lowcloudnine/lighthouse:2.1.0 \
      --category best-practices \
      --url https://www.python.org
 83
 $ docker run --rm \
-     -v /home/wodan:/output \
-     lowcloudnine/lighthouse:2.0.0 \
+     -v /home/wodan:/workspace \
+     docker.io/lowcloudnine/lighthouse:2.1.0 \
      -c accessibility \
      -u https://www.python.org \
      --report
-The results are in: ./output.html
+lighthouse_accessibility_20220503_1511.html
 </pre></div>
 </div>
 <p>Please see the full <a class="reference external" href="https://lowcloudnine.github.io/lighthouse_container/">documentation</a>.</p>
@@ -107,6 +107,7 @@ lighthouse used on this site.  The fav-icon for the site is provided by
 </li>
 <li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="deploy.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#docker-hub">Docker Hub</a></li>
 </ul>
 </li>
 </ul>
@@ -123,6 +124,22 @@ lighthouse used on this site.  The fav-icon for the site is provided by
 </section>
 <section id="change-log">
 <h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline"></a></h1>
+<section id="better-file-names-for-output">
+<h2>2.1.0 2022-05-03 Better file names for output<a class="headerlink" href="#better-file-names-for-output" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Refactored entrypoint.py to:</dt><dd><ul>
+<li><p>output file names with dates and times in them</p></li>
+<li><p>create LighthouseTest class to easy working with tests</p></li>
+<li><p>ran entrypoint through black and pylint</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Added ARG to Dockerfile for the output/workspace directory</p></li>
+<li><p>Updated documentation with the changes</p></li>
+</ul>
+</section>
 <section id="add-documentation">
 <h2>2.0.1 2022-04-27 Add documentation<a class="headerlink" href="#add-documentation" title="Permalink to this headline"></a></h2>
 <ul class="simple">

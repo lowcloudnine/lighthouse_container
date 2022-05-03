@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>entrypoint &mdash; Lighthouse Container 2.0.1 documentation</title>
+  <title>entrypoint &mdash; Lighthouse Container 2.1.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/plymouth.png"/>
@@ -71,8 +71,8 @@
 <span class="sd">Entrypoint</span>
 <span class="sd">----------</span>
 
-<span class="sd">A short script to parse the &quot;score&quot; from the JSON output of Google Lighthouse and</span>
-<span class="sd">to work as the entry point for a docker container.</span>
+<span class="sd">A short script to parse the &quot;score&quot; from the JSON output of Google Lighthouse</span>
+<span class="sd">and to work as the entry point for a docker container.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Imports</span>
@@ -81,129 +81,173 @@
 
 <span class="c1"># ---- System</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="c1"># Define version in this file as a centralized and easy place to get to and change</span>
-<span class="c1"># Use semanic version as defined at: https://semver.org/</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.0.1&quot;</span>
+<span class="c1"># Define version in this file as a centralized and easy place to get to</span>
+<span class="c1"># and change.  Use semanic version as defined at: https://semver.org/</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.1.0&quot;</span>
+
+<span class="c1"># ----------------------------------------------------------------------------</span>
+<span class="c1"># Class: LighthouseTest</span>
+<span class="c1"># ----------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="LighthouseTest"><a class="viewcode-back" href="../entrypoint.html#entrypoint.LighthouseTest">[docs]</a><span class="k">class</span> <span class="nc">LighthouseTest</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A lighthouse test as an object.</span>
+
+<span class="sd">    The class/object will include all the associated datastructures and</span>
+<span class="sd">    functionality.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">access_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">access_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a lighthouse test object to manipulate and provide output.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">category</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span> <span class="o">=</span> <span class="n">report_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bucket</span> <span class="o">=</span> <span class="n">bucket</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">access_id</span> <span class="o">=</span> <span class="n">access_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span> <span class="o">=</span> <span class="n">access_key</span>
+
+        <span class="n">dtg</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/workspace/lighthouse_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dtg</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">report_type</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="LighthouseTest.generate_report"><a class="viewcode-back" href="../entrypoint.html#entrypoint.LighthouseTest.generate_report">[docs]</a>    <span class="k">def</span> <span class="nf">generate_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Use lighthouse to generate an output file.&quot;&quot;&quot;</span>
+        <span class="n">chrome_flags</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;--headless&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;--window-size=821,843&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;--no-sandbox&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;--enable-javascript&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;--ignore-certificate-errors&quot;</span><span class="p">,</span>  <span class="c1"># ignore https certificate issues</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># All the options for lighthouse can be found at:</span>
+        <span class="c1">#  https://github.com/GoogleChrome/lighthouse#cli-options</span>
+        <span class="n">lighthouse_args</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;--chrome-flags=&quot;</span><span class="si">{</span><span class="n">chrome_flags</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;--only-categories &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;--no-enable-error-reporting&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;--output </span><span class="si">{</span><span class="n">report_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;--output-path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;lighthouse&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">lighthouse_args</span><span class="p">]),</span>
+            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span></div>
+
+<div class="viewcode-block" id="LighthouseTest.parse_score"><a class="viewcode-back" href="../entrypoint.html#entrypoint.LighthouseTest.parse_score">[docs]</a>    <span class="k">def</span> <span class="nf">parse_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Entry point for the script.&quot;&quot;&quot;</span>
+        <span class="n">report_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_report</span><span class="p">(</span><span class="n">report_type</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">report</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="c1"># Clean up the file so if there&#39;s a volume mount, there&#39;s no clutter</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span> <span class="o">==</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">report_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">)</span></div></div>
+
 
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Functions</span>
 <span class="c1"># ----------------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="lighthouse"><a class="viewcode-back" href="../entrypoint.html#entrypoint.lighthouse">[docs]</a><span class="k">def</span> <span class="nf">lighthouse</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Use lighthouse to generate an output file.&quot;&quot;&quot;</span>
-    <span class="c1"># All the options for lighthouse can be found at:</span>
-    <span class="c1">#  https://github.com/GoogleChrome/lighthouse#cli-options</span>
-    <span class="n">chrome_flags</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
-        <span class="s2">&quot;--headless&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--window-size=821,843&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--no-sandbox&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--enable-javascript&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--ignore-certificate-errors&quot;</span><span class="p">,</span>  <span class="c1"># ignore https certificate issues</span>
-    <span class="p">])</span>
-
-    <span class="n">lighthouse_args</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">url</span><span class="p">,</span>
-        <span class="c1"># chrome flags are needed to fake out sites as headless often makes them</span>
-        <span class="c1"># not provide the data needed</span>
-        <span class="sa">f</span><span class="s1">&#39;--chrome-flags=&quot;</span><span class="si">{</span><span class="n">chrome_flags</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">&#39;--only-categories &quot;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;--no-enable-error-reporting&#39;</span><span class="p">,</span>  <span class="c1"># this keeps Google&#39;s request for reports quiet</span>
-                                        <span class="c1"># and avoids the associated 20 second delay</span>
-        <span class="s1">&#39;--quiet&#39;</span>  <span class="c1"># Keeps the lighthouse output quiet comment out if you are debugging</span>
-    <span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
-        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output html&#39;</span><span class="p">)</span>
-        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output-path /output/output.html&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output json&#39;</span><span class="p">)</span>
-        <span class="n">lighthouse_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--output-path /output/output.json&#39;</span><span class="p">)</span>
-
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;lighthouse&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">lighthouse_args</span><span class="p">]),</span>
-        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="parse_score"><a class="viewcode-back" href="../entrypoint.html#entrypoint.parse_score">[docs]</a><span class="k">def</span> <span class="nf">parse_score</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Entry point for the script.&quot;&quot;&quot;</span>
-    <span class="n">report_json</span> <span class="o">=</span> <span class="s2">&quot;/output/output.json&quot;</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">report</span><span class="p">:</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">][</span><span class="n">category</span><span class="p">][</span><span class="s1">&#39;score&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-
-    <span class="c1"># Clean up the file so if there&#39;s a volume mount, there&#39;s no clutter</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;/output/output.json&quot;</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../entrypoint.html#entrypoint.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Return a namespace of the parsed arguments for the program.&quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
         <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;docker run [various docker options] lighthouse&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Run Google Lighthouse inside a docker container with some options.&#39;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Run Google Lighthouse inside a docker container with some options.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--category&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;--category&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;accessibility&#39;</span><span class="p">,</span>
-        <span class="n">choices</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;accessibility&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;best-practices&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;performance&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pwa&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;seo&quot;</span>
-        <span class="p">],</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The category/type of test to run, defaults to accessibility.&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;accessibility&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accessibility&quot;</span><span class="p">,</span> <span class="s2">&quot;best-practices&quot;</span><span class="p">,</span> <span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="s2">&quot;pwa&quot;</span><span class="p">,</span> <span class="s2">&quot;seo&quot;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The category/type of test to run, defaults to accessibility.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--url&#39;</span><span class="p">,</span> <span class="s1">&#39;-u&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;--url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-u&quot;</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;https://python.org&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A valid URL to a web site to test must start with a valid protocol &quot;</span> \
-             <span class="s2">&quot;of http:// or https://.  Defaults to https://www.python.org&quot;</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;https://www.python.org&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A valid URL to a web site to test must start with a valid protocol &quot;</span>
+        <span class="s2">&quot;of http:// or https://.  Defaults to https://www.python.org&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--report&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate/Output the full HTML report to a file.  If this flag/option &quot;</span> \
-             <span class="s2">&quot;is set only the html file will be generated in the directory mounted &quot;</span> \
-             <span class="s2">&quot;with the docker volume flag, i.e. -v /home/user/reports:/output &quot;</span> \
-             <span class="s2">&quot;as output.html.  If the flag is not given a single number, the &quot;</span> \
-             <span class="s2">&quot;result of the given test which is between 0 and 100 will be piped &quot;</span> \
-             <span class="s2">&quot;to stdout.&quot;</span>
+        <span class="s2">&quot;--report&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-r&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate/workspace the full HTML report to a file.  If this flag/option &quot;</span>
+        <span class="s2">&quot;is set only the html file will be generated in the directory mounted &quot;</span>
+        <span class="s2">&quot;with the docker volume flag, i.e. -v /home/user/reports:/workspace &quot;</span>
+        <span class="s2">&quot;as output.html.  If the flag is not given a single number, the &quot;</span>
+        <span class="s2">&quot;result of the given test which is between 0 and 100 will be piped &quot;</span>
+        <span class="s2">&quot;to stdout.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate more verbose output.&quot;</span>
     <span class="p">)</span>
 
     <span class="n">all_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: Provide a valid URL, it must start with: http:// or https://&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">all_args</span></div>
+
 
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Main</span>
 <span class="c1"># ----------------------------------------------------------------------------</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../entrypoint.html#entrypoint.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">report</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../entrypoint.html#entrypoint.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">report</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run as the entrypoint and ensure the input is correct.&quot;&quot;&quot;</span>
     <span class="c1"># Run Google Lighthouse for the given category and URL</span>
-    <span class="n">lighthouse</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+
+    <span class="c1"># first set the report type</span>
     <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The results are in: ./output.html&quot;</span><span class="p">)</span>
+        <span class="n">report_type</span> <span class="o">=</span> <span class="s2">&quot;html&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">parse_score</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">report</span><span class="p">))</span>  <span class="c1"># &lt;-- print the score to stdout</span></div>
+        <span class="n">report_type</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+
+    <span class="c1"># create the lighthouse test object</span>
+    <span class="n">lh_test</span> <span class="o">=</span> <span class="n">LighthouseTest</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">report_type</span><span class="p">)</span>
+
+    <span class="c1"># then run based on report type and output appropriately to stdout</span>
+    <span class="k">if</span> <span class="n">report</span><span class="p">:</span>
+        <span class="c1"># print just the file name to stdout,</span>
+        <span class="c1"># i.e. lighthouse_best-practices_20220503_1511.html</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">lh_test</span><span class="o">.</span><span class="n">generate_report</span><span class="p">(</span><span class="n">report_type</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># print just the numeric score to stdout, i.e. 75</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">lh_test</span><span class="o">.</span><span class="n">parse_score</span><span class="p">())</span></div>
+
 
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Name</span>
@@ -212,6 +256,12 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">the_args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">the_args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Category: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Report: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="n">main</span><span class="p">(</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
 </pre></div>
 
