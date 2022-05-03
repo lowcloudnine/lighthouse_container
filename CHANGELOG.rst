@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+2.1.0 2022-05-03 Better file names for output
+---------------------------------------------
+
+- Refactored entrypoint.py to:
+    - output file names with dates and times in them
+    - create LighthouseTest class to easy working with tests
+    - ran entrypoint through black and pylint
+- Added ARG to Dockerfile for the output/workspace directory
+- Updated documentation with the changes
+
 2.0.1 2022-04-27 Add documentation
 ----------------------------------
 - Add sphinx generated documentation
