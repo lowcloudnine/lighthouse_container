@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Entrypoint
 ----------
@@ -20,7 +21,7 @@ import sys
 
 # Define version in this file as a centralized and easy place to get to
 # and change.  Use semanic version as defined at: https://semver.org/
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 
 # ----------------------------------------------------------------------------
 # Class: LighthouseTest
@@ -28,32 +29,23 @@ __version__ = "2.1.0"
 
 
 class LighthouseTest:
-    """A lighthouse test as an object.
-
-    The class/object will include all the associated datastructures and
-    functionality.
-
-    """
+    """A lighthouse test as an object."""
 
     def __init__(
         self,
         url: str,
         category: str,
         report_type: str = "json",
-        bucket: str = "",
-        access_id: str = "",
-        access_key: str = "",
     ) -> None:
-        """Create a lighthouse test object to manipulate and provide output."""
+        """Create a lighthouse test object to manipulate to provide test output."""
         self.category = category
         self.url = url
         self.report_type = report_type
-        self.bucket = bucket
-        self.access_id = access_id
-        self.access_key = access_key
 
         dtg = datetime.datetime.now().strftime("%Y%m%d_%H%M")
-        self.output_path = f"/workspace/lighthouse_{self.category}_{dtg}.{report_type}"
+        self.output_path = (
+            f"{os.getenv('WORK_DIR')}/lighthouse_{self.category}_{dtg}.{report_type}"
+        )
 
     def generate_report(self, report_type) -> str:
         """Use lighthouse to generate an output file."""
@@ -145,6 +137,7 @@ def parse_args():
     )
 
     all_args = parser.parse_args()
+
     if not (all_args.url.startswith("http://") or all_args.url.startswith("https://")):
         print("ERROR: Provide a valid URL, it must start with: http:// or https://")
         sys.exit(1)
@@ -179,7 +172,6 @@ def main(category: str, url: str, report: bool):
         # print just the numeric score to stdout, i.e. 75
         print(lh_test.parse_score())
 
-
 # ----------------------------------------------------------------------------
 # Name
 # ----------------------------------------------------------------------------
@@ -189,8 +181,22 @@ if __name__ == "__main__":
     the_args = parse_args()
 
     if the_args.verbose:
+        print()
+        print("-" * 40)
+        print(f"All arguments given: {the_args}")
+        print()
         print(f"Category: {the_args.category}")
         print(f"URL: {the_args.url}")
         print(f"Report: {the_args.report}")
+        print(f"Verbose: {the_args.verbose}")
+        print()
+        if the_args.report:
+            print("Output file: ")
+        else:
+            print("Score: ")
+        main(the_args.category, the_args.url, the_args.report)
+        print("-" * 40)
+        print()
 
-    main(the_args.category, the_args.url, the_args.report)
+    else:
+        main(the_args.category, the_args.url, the_args.report)
