@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+2.2.0 2022-05-03 More explicit entrypoint
+-----------------------------------------
+
+- Dockerfile has more explicit code pointing to the entrypoint with notes about
+  why it was done that way
+- entrypoint.py get the output directory from the environment as it's provided
+  by the Dockerfile
+- Verbose is now actually more verbose and provides semi-useful information
+- Updated README with more examples such as using the --help flag
+
 2.1.0 2022-05-03 Better file names for output
 ---------------------------------------------
 
