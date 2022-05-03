@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lighthouse Container &mdash; Lighthouse Container 2.1.0 documentation</title>
+  <title>Lighthouse Container &mdash; Lighthouse Container 2.2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -70,21 +70,96 @@
   <section id="lighthouse-container">
 <h1>Lighthouse Container<a class="headerlink" href="#lighthouse-container" title="Permalink to this headline"></a></h1>
 <p>⛯  A container to run Google Lighthouse tests.</p>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
-     docker.io/lowcloudnine/lighthouse:2.1.0 \
+     docker.io/lowcloudnine/lighthouse:2.2.0 \
      --category best-practices \
      --url https://www.python.org
 83
 $ docker run --rm \
      -v /home/wodan:/workspace \
-     docker.io/lowcloudnine/lighthouse:2.1.0 \
+     docker.io/lowcloudnine/lighthouse:2.2.0 \
      -c accessibility \
      -u https://www.python.org \
      --report
 lighthouse_accessibility_20220503_1511.html
 </pre></div>
 </div>
-<p>Please see the full <a class="reference external" href="https://lowcloudnine.github.io/lighthouse_container/">documentation</a>.</p>
+</section>
+<section id="getting-help">
+<h3>Getting Help<a class="headerlink" href="#getting-help" title="Permalink to this headline"></a></h3>
+<p>The container can be run with help flags (–help or -h) and outputs help in a
+format familiar to linux shell users.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
+    docker.io/lowcloudnine/lighthouse:2.2.0 \
+    --help
+usage: docker run [various docker options] lighthouse [-h]
+                                                      [--category {accessibility,best-practices,performance,pwa,seo}]
+                                                      [--url URL] [--report]
+                                                      [--verbose]
+
+Run Google Lighthouse inside a docker container with some options.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --category {accessibility,best-practices,performance,pwa,seo}, -c {accessibility,best-practices,performance,pwa,seo}
+                        The category/type of test to run, defaults to
+                        accessibility.
+  --url URL, -u URL     A valid URL to a web site to test must start with a
+                        valid protocol of http:// or https://. Defaults to
+                        https://www.python.org
+  --report, -r          Generate/workspace the full HTML report to a file. If
+                        this flag/option is set only the html file will be
+                        generated in the directory mounted with the docker
+                        volume flag, i.e. -v /home/user/reports:/workspace as
+                        output.html. If the flag is not given a single number,
+                        the result of the given test which is between 0 and
+                        100 will be piped to stdout.
+  --verbose, -v         Generate more verbose output.
+</pre></div>
+</div>
+</section>
+<section id="verbose">
+<h3>Verbose<a class="headerlink" href="#verbose" title="Permalink to this headline"></a></h3>
+<p>If you are working on improving the image/container or you just want to see more
+output the verbose flag might be helpful.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ # for the score output
+$ docker run --rm \
+    docker.io/lowcloudnine/lighthouse:2.2.0 --verbose
+----------------------------------------
+All arguments given: Namespace(category=&#39;accessibility&#39;, report=False, url=&#39;https://www.python.org&#39;, verbose=True)
+
+Category: accessibility
+URL: https://www.python.org
+Report: False
+Verbose: True
+
+Score:
+78
+----------------------------------------
+$ # ... or for the report output
+$ docker run --rm \
+    docker.io/lowcloudnine/lighthouse:2.2.0 --verbose --report
+----------------------------------------
+All arguments given: Namespace(category=&#39;accessibility&#39;, report=True, url=&#39;https://www.python.org&#39;, verbose=True)
+
+Category: accessibility
+URL: https://www.python.org
+Report: True
+Verbose: True
+
+Output file:
+lighthouse_accessibility_20220503_2027.html
+----------------------------------------
+</pre></div>
+</div>
+<p>Please see the full <a class="reference external" href="https://lowcloudnine.github.io/lighthouse_container/">documentation</a>
+and/or visit the <a class="reference external" href="https://github.com/lowcloudnine/lighthouse_container">GitHub repository</a>.</p>
+</section>
+</section>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
 <p>An OCI compliant image available on

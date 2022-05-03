@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>entrypoint &mdash; Lighthouse Container 2.1.0 documentation</title>
+  <title>entrypoint &mdash; Lighthouse Container 2.2.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="../_static/plymouth.png"/>
@@ -67,7 +67,8 @@
            <div itemprop="articleBody">
              
   <h1>Source code for entrypoint</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Entrypoint</span>
 <span class="sd">----------</span>
 
@@ -89,7 +90,7 @@
 
 <span class="c1"># Define version in this file as a centralized and easy place to get to</span>
 <span class="c1"># and change.  Use semanic version as defined at: https://semver.org/</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.1.0&quot;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;2.2.0&quot;</span>
 
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Class: LighthouseTest</span>
@@ -97,32 +98,23 @@
 
 
 <div class="viewcode-block" id="LighthouseTest"><a class="viewcode-back" href="../entrypoint.html#entrypoint.LighthouseTest">[docs]</a><span class="k">class</span> <span class="nc">LighthouseTest</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A lighthouse test as an object.</span>
-
-<span class="sd">    The class/object will include all the associated datastructures and</span>
-<span class="sd">    functionality.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A lighthouse test as an object.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">report_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
-        <span class="n">bucket</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">access_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">access_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a lighthouse test object to manipulate and provide output.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Create a lighthouse test object to manipulate to provide test output.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">category</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span> <span class="o">=</span> <span class="n">report_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bucket</span> <span class="o">=</span> <span class="n">bucket</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">access_id</span> <span class="o">=</span> <span class="n">access_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">access_key</span> <span class="o">=</span> <span class="n">access_key</span>
 
         <span class="n">dtg</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/workspace/lighthouse_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dtg</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">report_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;WORK_DIR&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/lighthouse_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dtg</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">report_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="LighthouseTest.generate_report"><a class="viewcode-back" href="../entrypoint.html#entrypoint.LighthouseTest.generate_report">[docs]</a>    <span class="k">def</span> <span class="nf">generate_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">report_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Use lighthouse to generate an output file.&quot;&quot;&quot;</span>
@@ -214,6 +206,7 @@
     <span class="p">)</span>
 
     <span class="n">all_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">all_args</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">)):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: Provide a valid URL, it must start with: http:// or https://&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -248,7 +241,6 @@
         <span class="c1"># print just the numeric score to stdout, i.e. 75</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">lh_test</span><span class="o">.</span><span class="n">parse_score</span><span class="p">())</span></div>
 
-
 <span class="c1"># ----------------------------------------------------------------------------</span>
 <span class="c1"># Name</span>
 <span class="c1"># ----------------------------------------------------------------------------</span>
@@ -258,11 +250,25 @@
     <span class="n">the_args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">the_args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All arguments given: </span><span class="si">{</span><span class="n">the_args</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Category: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;URL: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Report: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Verbose: </span><span class="si">{</span><span class="n">the_args</span><span class="o">.</span><span class="n">verbose</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Output file: &quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score: &quot;</span><span class="p">)</span>
+        <span class="n">main</span><span class="p">(</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
 
-    <span class="n">main</span><span class="p">(</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">(</span><span class="n">the_args</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">the_args</span><span class="o">.</span><span class="n">report</span><span class="p">)</span>
 </pre></div>
 
            </div>
