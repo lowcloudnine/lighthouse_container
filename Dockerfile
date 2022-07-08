@@ -1,4 +1,4 @@
-FROM redhat/ubi8:8.5
+FROM redhat/ubi8:latest
 
 ENV WORK_DIR=/workspace
 
