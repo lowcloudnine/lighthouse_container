@@ -10,17 +10,17 @@ Basic Usage
 .. code-block::
 
     $ docker run --rm \
-         docker.io/lowcloudnine/lighthouse:2.2.0 \
+         docker.io/lowcloudnine/lighthouse:3.0.0 \
          --category best-practices \
          --url https://www.python.org
     83
     $ docker run --rm \
          -v /home/wodan:/workspace \
-         docker.io/lowcloudnine/lighthouse:2.2.0 \
+         docker.io/lowcloudnine/lighthouse:3.0.0 \
          -c accessibility \
          -u https://www.python.org \
          --report
-    lighthouse_accessibility_20220503_1511.html
+    lighthouse_accessibility_20220708_2302.html
 
 Getting Help
 ~~~~~~~~~~~~
@@ -31,7 +31,7 @@ format familiar to linux shell users.
 .. code-block::
 
     $ docker run --rm \
-        docker.io/lowcloudnine/lighthouse:2.2.0 \
+        docker.io/lowcloudnine/lighthouse:3.0.0 \
         --help
     usage: docker run [various docker options] lighthouse [-h]
                                                           [--category {accessibility,best-practices,performance,pwa,seo}]
@@ -67,7 +67,7 @@ output the verbose flag might be helpful.
 
     $ # for the score output
     $ docker run --rm \
-        docker.io/lowcloudnine/lighthouse:2.2.0 --verbose
+        docker.io/lowcloudnine/lighthouse:3.0.0 --verbose
     ----------------------------------------
     All arguments given: Namespace(category='accessibility', report=False, url='https://www.python.org', verbose=True)
 
@@ -81,7 +81,7 @@ output the verbose flag might be helpful.
     ----------------------------------------
     $ # ... or for the report output
     $ docker run --rm \
-        docker.io/lowcloudnine/lighthouse:2.2.0 --verbose --report
+        docker.io/lowcloudnine/lighthouse:3.0.0 --verbose --report
     ----------------------------------------
     All arguments given: Namespace(category='accessibility', report=True, url='https://www.python.org', verbose=True)
 
@@ -91,7 +91,7 @@ output the verbose flag might be helpful.
     Verbose: True
 
     Output file:
-    lighthouse_accessibility_20220503_2027.html
+    lighthouse_accessibility_20220708_2302.html
     ----------------------------------------
 
 Please see the full `documentation <https://lowcloudnine.github.io/lighthouse_container/>`_

@@ -35,6 +35,16 @@ An example deployment would look like:
 .. code-block::
 
     $ cd /path/to/project
-    $ docker build -t docker.io/lowcloudnine/lighthouse:2.0.1 .
+    $ export VER=3.0.0  # or if you are in Powershell use: `$VER = "3.0.0"`
+    $ docker build -t lighthouse .
     $ docker login
-    $ docker push docker.io/lowcloudnine/lighthouse:2.0.1
+    $ docker tag lighthouse docker.io/lowcloudnine/lighthouse:${VER}
+    $ docker push docker.io/lowcloudnine/lighthouse:${VER}
+
+and then a push of the image to **latest**.  The following commands assume you have
+completed the above commands:
+
+.. code-block::
+
+    $ docker tag lighthouse docker.io/lowcloudnine/lighthouse:latest
+    $ docker push docker.io/lowcloudnine/lighthouse:latest
