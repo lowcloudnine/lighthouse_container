@@ -21,7 +21,7 @@ import sys
 
 # Define version in this file as a centralized and easy place to get to
 # and change.  Use semanic version as defined at: https://semver.org/
-__version__ = "2.2.0"
+__version__ = "3.0.0"
 
 # ----------------------------------------------------------------------------
 # Class: LighthouseTest
