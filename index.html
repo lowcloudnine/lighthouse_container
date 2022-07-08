@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lighthouse Container &mdash; Lighthouse Container 2.2.0 documentation</title>
+  <title>Lighthouse Container &mdash; Lighthouse Container 3.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -75,17 +75,17 @@
 <section id="basic-usage">
 <h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
-     docker.io/lowcloudnine/lighthouse:2.2.0 \
+     docker.io/lowcloudnine/lighthouse:3.0.0 \
      --category best-practices \
      --url https://www.python.org
 83
 $ docker run --rm \
      -v /home/wodan:/workspace \
-     docker.io/lowcloudnine/lighthouse:2.2.0 \
+     docker.io/lowcloudnine/lighthouse:3.0.0 \
      -c accessibility \
      -u https://www.python.org \
      --report
-lighthouse_accessibility_20220503_1511.html
+lighthouse_accessibility_20220708_2302.html
 </pre></div>
 </div>
 </section>
@@ -94,7 +94,7 @@ lighthouse_accessibility_20220503_1511.html
 <p>The container can be run with help flags (–help or -h) and outputs help in a
 format familiar to linux shell users.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker run --rm \
-    docker.io/lowcloudnine/lighthouse:2.2.0 \
+    docker.io/lowcloudnine/lighthouse:3.0.0 \
     --help
 usage: docker run [various docker options] lighthouse [-h]
                                                       [--category {accessibility,best-practices,performance,pwa,seo}]
@@ -128,7 +128,7 @@ optional arguments:
 output the verbose flag might be helpful.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ # for the score output
 $ docker run --rm \
-    docker.io/lowcloudnine/lighthouse:2.2.0 --verbose
+    docker.io/lowcloudnine/lighthouse:3.0.0 --verbose
 ----------------------------------------
 All arguments given: Namespace(category=&#39;accessibility&#39;, report=False, url=&#39;https://www.python.org&#39;, verbose=True)
 
@@ -142,7 +142,7 @@ Score:
 ----------------------------------------
 $ # ... or for the report output
 $ docker run --rm \
-    docker.io/lowcloudnine/lighthouse:2.2.0 --verbose --report
+    docker.io/lowcloudnine/lighthouse:3.0.0 --verbose --report
 ----------------------------------------
 All arguments given: Namespace(category=&#39;accessibility&#39;, report=True, url=&#39;https://www.python.org&#39;, verbose=True)
 
@@ -152,7 +152,7 @@ Report: True
 Verbose: True
 
 Output file:
-lighthouse_accessibility_20220503_2027.html
+lighthouse_accessibility_20220708_2302.html
 ----------------------------------------
 </pre></div>
 </div>
@@ -199,6 +199,24 @@ lighthouse used on this site.  The fav-icon for the site is provided by
 </section>
 <section id="change-log">
 <h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline"></a></h1>
+<section id="changes-base-to-ubi8-minimal">
+<h2>3.0.0 2022-07-08 Changes base to ubi8-minimal<a class="headerlink" href="#changes-base-to-ubi8-minimal" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Based on the fix in 2.2.1 to latest image and reading security reports,
+changed the base image to ubi8-minimal:latest to reduce vulnerabilities and
+reduced the container size to 1.05GB</p></li>
+<li><p>Added an ENV for USER and then updated the appropriate places in the
+Dockerfile</p></li>
+<li><p>Updated the documentation with the new version numbers and added tagging
+instructions as a latest version was added to docker hub</p></li>
+</ul>
+</section>
+<section id="changed-base-to-latest">
+<h2>2.2.1 2022-07-08 Changed base to latest<a class="headerlink" href="#changed-base-to-latest" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>Based on a recommendation from Snyk, changed the base container image to latest</p></li>
+</ul>
+</section>
 <section id="more-explicit-entrypoint">
 <h2>2.2.0 2022-05-03 More explicit entrypoint<a class="headerlink" href="#more-explicit-entrypoint" title="Permalink to this headline"></a></h2>
 <ul class="simple">

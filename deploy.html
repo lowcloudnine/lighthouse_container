@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deploy &mdash; Lighthouse Container 2.2.0 documentation</title>
+  <title>Deploy &mdash; Lighthouse Container 3.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="shortcut icon" href="_static/plymouth.png"/>
@@ -96,9 +96,17 @@ the semanic version number of the image release and ideally there should be a ta
 with the same version number.</p>
 <p>An example deployment would look like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /path/to/project
-$ docker build -t docker.io/lowcloudnine/lighthouse:2.0.1 .
+$ export VER=3.0.0  # or if you are in Powershell use: `$VER = &quot;3.0.0&quot;`
+$ docker build -t lighthouse .
 $ docker login
-$ docker push docker.io/lowcloudnine/lighthouse:2.0.1
+$ docker tag lighthouse docker.io/lowcloudnine/lighthouse:${VER}
+$ docker push docker.io/lowcloudnine/lighthouse:${VER}
+</pre></div>
+</div>
+<p>and then a push of the image to <strong>latest</strong>.  The following commands assume you have
+completed the above commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ docker tag lighthouse docker.io/lowcloudnine/lighthouse:latest
+$ docker push docker.io/lowcloudnine/lighthouse:latest
 </pre></div>
 </div>
 </section>
