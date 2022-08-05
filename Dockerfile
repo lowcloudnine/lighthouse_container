@@ -9,7 +9,6 @@ RUN \
     microdnf -y update && \
     \
     # Add Google Chrome
-    # microdnf -y install dnf-plugins-core && \
     microdnf -y install yum && \
     yum -y install yum-utils && \
     yum-config-manager --add-repo http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/ && \
