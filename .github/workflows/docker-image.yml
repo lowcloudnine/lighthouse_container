@@ -3,31 +3,29 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Docker Login
+    -
+      name: Docker Login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USER }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    -
+      name: Docker Build
       env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-      run: |
-        docker login --user $DOCKER_USER --password $DOCKER_PASSWORD
-    
-    - name: Docker Build
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-      run: docker build . --file Dockerfile --tag ${{secrets.DOCKER_USER}}/lighthouse:$(date +s%)
-    
-    - name: Docker Push
-      env:
-        DOCKER_USER: ${{secrets.DOCKER_USER}}
-      run: docker push ${{secrets.DOCKER_USER}}/lighthouse:$(date +s%)
+        DOCKERHUB_USER: ${{secrets.DOCKERHUB_USER}}
+      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d")
+    -
+      name: Docker Push Version
+      run: docker push ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d")
+    -
+      name: Docker Tag Latest
+      run:  docker tag ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d") ${{secrets.DOCKERHUB_USER}}/lighthouse:latest
+    -
+      name: Docker Push Latest
+      run:  docker push ${{secrets.DOCKERHUB_USER}}/lighthouse:latest
