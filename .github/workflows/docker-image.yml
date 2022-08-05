@@ -21,9 +21,13 @@ jobs:
       name: Docker Build
       env:
         DOCKERHUB_USER: ${{secrets.DOCKERHUB_USER}}
-      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +s%)
+      run: docker build . --file Dockerfile --tag ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d")
     -
-      name: Docker Push
-      env:
-        DOCKERHUB_USER: ${{secrets.DOCKERHUB_USER}}
-      run: docker push ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +s%)
+      name: Docker Push Version
+      run: docker push ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d")
+    -
+      name: Docker Tag Latest
+      run:  docker tag ${{secrets.DOCKERHUB_USER}}/lighthouse:$(date +"%Y.%m.%d") ${{secrets.DOCKERHUB_USER}}/lighthouse:latest
+    -
+      name: Docker Push Latest
+      run:  docker push ${{secrets.DOCKERHUB_USER}}/lighthouse:latest
