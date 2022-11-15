@@ -21,3 +21,4 @@ ghp-import == 2.0.2
 # -----------------------------
 black == 22.3.0
 pylint == 2.13.8
+setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
