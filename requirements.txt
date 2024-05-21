@@ -21,3 +21,4 @@ ghp-import == 2.0.2
 # -----------------------------
 black == 22.3.0
 pylint == 2.13.8
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
